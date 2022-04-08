@@ -6,33 +6,45 @@ require_once 'Classes/Services/PaperRecyclor.php';
 require_once 'Classes/Services/PlasticRecyclor.php';
 require_once 'Classes/Services/Compost.php';
 require_once 'Classes/Trashes/PVC.php';
+require_once 'Classes/Trashes/PC.php';
+require_once 'Classes/Trashes/PET.php';
+require_once 'Classes/Trashes/PEHD.php';
 require_once 'Classes/Trashes/Paper.php';
 require_once 'Classes/Trashes/Glass.php';
 require_once 'Classes/JSONDecoder.php';
 require_once 'Classes/JSONCutter.php';
 
-function createIncinerator(){
+function createPlasticRecyclor(){
     //Variables
-    $type = 'incinerateur'; //We know already because it's the incinerator class
-    $total = 0;
+    $type = 'recyclagePlastique'; // because it's the MetalRecyclor class
+    $mykey = "plastiques";
     $capa = 0;
-    $lignes = 0;
-
+    $plast = array();
+    $obj = null;
     $cutter = new JSONCutter();
     $serv = $cutter->getCut(GetCapaServInterface::json,'services');
+    
 
     foreach ($serv as $i=>$value) {
         $array = $serv[$i];
         if($array["type"] == $type){
-            $capa += $value["capaciteLigne"];
-            $lignes += $value["ligneFour"];
+            $types = $value["plastiques"];
+            foreach ($types as $j=>$v){
+                    $plast[] = $v;
+                }
+            $capa += $value["capacite"];
+            $current = new PlasticRecyclor($capa);
+            $current->setPlast($plast);
+            $obj[] = $current;
+            unset($plast);
         }
     }
-    $incinerator = new Incinerator($lignes,$capa);
-    $total = $capa*$lignes;
-    $incinerator->setMaxCapa($total);
-    return $incinerator;
-}   
-$test = createIncinerator();
-var_dump($test);
+    return $obj;
+
+}
+
+$test = createPlasticRecyclor();
+print_r($test) ;
+
+
 ?>
