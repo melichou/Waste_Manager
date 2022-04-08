@@ -14,37 +14,5 @@ require_once 'Classes/Trashes/Glass.php';
 require_once 'Classes/JSONDecoder.php';
 require_once 'Classes/JSONCutter.php';
 
-function createPlasticRecyclor(){
-    //Variables
-    $type = 'recyclagePlastique'; // because it's the MetalRecyclor class
-    $mykey = "plastiques";
-    $capa = 0;
-    $plast = array();
-    $obj = null;
-    $cutter = new JSONCutter();
-    $serv = $cutter->getCut(GetCapaServInterface::json,'services');
-    
-
-    foreach ($serv as $i=>$value) {
-        $array = $serv[$i];
-        if($array["type"] == $type){
-            $types = $value["plastiques"];
-            foreach ($types as $j=>$v){
-                    $plast[] = $v;
-                }
-            $capa += $value["capacite"];
-            $current = new PlasticRecyclor($capa);
-            $current->setPlast($plast);
-            $obj[] = $current;
-            unset($plast);
-        }
-    }
-    return $obj;
-
-}
-
-$test = createPlasticRecyclor();
-print_r($test) ;
-
 
 ?>
