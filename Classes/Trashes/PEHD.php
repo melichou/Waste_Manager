@@ -1,5 +1,31 @@
 <?php
 require_once 'Classes/Trashes/Plastic.php';
-class PEHD extends Plastic{
-    //not sure of this class
+require_once 'Classes/JSONCutter.php';
+require_once 'Interfaces/GetVolTrashInterface.php';
+class PEHD extends Plastic implements GetVolTrashInterface{
+    //interfaces' function
+    public function getTotalVolume() : float
+    {
+        $type = 'plastiques'; //It's the parent class
+        $type2 = 'PEHD';      //Because it's the class
+        $capa = 0;
+        $total = 0;
+        $cutter = new JSONCutter();
+        $quart = $cutter->getCut(GetVolTrashInterface::json,'quartiers');
+        
+        foreach ($quart as $i=>$value) {
+            $array = $quart[$i];
+            foreach ($array as $key=>$val){
+                if(is_array($val) == true){
+                    $qrt = $array[$key];
+                    foreach ($qrt as $j=>$v){
+                        if($j == $type2){
+                            $capa += $v;
+                        }
+                    }
+                }         
+            }
+        }
+        return $capa;
+    }
 }
